@@ -26,10 +26,17 @@ namespace MyFirstApi.Controllers
             await _context.SaveChangesAsync();
             return store;
         }
-
         [HttpGet]
-        public async Task<List<Store>> Get()
-            => await _context.Stores.ToListAsync();
+        public async Task<ActionResult<List<Store>>> Get()
+        {
+            var stores = await _context.Stores
+                .Include(s => s.Employees)
+                .Include(s => s.Phones)
+                .Include(s => s.Laptops)
+                .ToListAsync();
+
+            return stores;
+        }
 
         [HttpPut]
         public async Task<Store?> UpdateStoreAsync(int id, string name, string location)
